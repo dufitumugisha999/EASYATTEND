@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>EASYATTEND | AI-powered Attendance Rwanda</title>
+  <!-- Poppins Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Iconify -->
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      transition: background 0.3s ease, color 0.3s ease;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body.dark {
+      background: #0b1120;
+      color: #e2e8f0;
+    }
+
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* ----- glass sidebar ----- */
+    .sidebar {
+      width: 280px;
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(0,0,0,0.05);
+      padding: 2rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px -10px rgba(0,0,0,0.03);
+      z-index: 10;
+    }
+
+    body.dark .sidebar {
+      background: rgba(15, 23, 42, 0.8);
+      border-right: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(24px);
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 2.5rem;
+      font-weight: 700;
+      font-size: 1.5rem;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-icon {
+      background: #2563eb;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      box-shadow: 0 8px 18px -6px rgba(37,99,235,0.4);
+    }
+
+    .nav-menu {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      padding: 0.8rem 1.2rem;
+      border-radius: 16px;
+      font-weight: 500;
+      color: #334155;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      width: 100%;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+
+    body.dark .nav-item {
+      color: #cbd5e1;
+    }
+
+    .nav-item:hover {
+      background: rgba(37,99,235,0.08);
+      color: #2563eb;
+    }
+
+    .nav-item.active {
+      background: #2563eb;
+      color: white;
+      box-shadow: 0 10px 20px -8px #2563eb;
+      font-weight: 600;
+    }
+
+    .bottom-side {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(0,0,0,0.03);
+      padding: 0.6rem 1rem;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    body.dark .theme-toggle {
+      background: rgba(255,255,255,0.06);
+    }
+
+    /* main content */
+    .main-panel {
+      flex: 1;
+      padding: 2rem 2.2rem;
+      overflow-y: auto;
+      background: #f8fafc;
+      transition: background 0.3s;
+    }
+
+    body.dark .main-panel {
+      background: #0b1120;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .search-box {
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(0,0,0,0.04);
+      border-radius: 50px;
+      padding: 0.7rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 340px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    }
+
+    body.dark .search-box {
+      background: rgba(30,41,59,0.7);
+      border-color: rgba(255,255,255,0.08);
+    }
+
+    .search-box input {
+      border: none;
+      background: transparent;
+      width: 100%;
+      font-family: 'Poppins', sans-serif;
+      outline: none;
+      color: inherit;
+    }
+
+    .profile-badge {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(255,255,255,0.6);
+      backdrop-filter: blur(12px);
+      padding: 0.4rem 1.2rem 0.4rem 0.8rem;
+      border-radius: 40px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+    }
+
+    body.dark .profile-badge {
+      background: rgba(30,41,59,0.7);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.75);
+      backdrop-filter: blur(16px);
+      border-radius: 28px;
+      padding: 1.5rem;
+      box-shadow: 0 15px 30px -12px rgba(0,0,0,0.05);
+      border: 1px solid rgba(255,255,255,0.5);
+      transition: transform 0.2s;
+    }
+
+    body.dark .stat-card {
+      background: rgba(30,41,59,0.6);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.8rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(20px);
+      border-radius: 32px;
+      padding: 1.5rem;
+      box-shadow: 0 20px 35px -15px rgba(0,0,0,0.05);
+      border: 1px solid rgba(255,255,255,0.6);
+      transition: all 0.2s;
+    }
+
+    body.dark .card {
+      background: rgba(23, 31, 49, 0.7);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .attendance-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .attendance-table th {
+      text-align: left;
+      font-weight: 500;
+      color: #64748b;
+      font-size: 0.8rem;
+      padding-bottom: 0.8rem;
+    }
+
+    .attendance-table td {
+      padding: 0.8rem 0;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    body.dark .attendance-table td {
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .btn {
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 40px;
+      padding: 0.65rem 1.5rem;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      box-shadow: 0 8px 18px -6px #2563eb;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #2563eb;
+      color: #2563eb;
+      box-shadow: none;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+      transform: scale(1.02);
+    }
+
+    .ai-badge {
+      background: linear-gradient(135deg, #7c3aed, #2563eb);
+      color: white;
+      border-radius: 30px;
+      padding: 0.2rem 0.9rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    @media (max-width: 700px) {
+      .sidebar {
+        display: none;
+      }
+      .main-panel {
+        padding: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="app-container" id="appContainer">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo-area">
+      <span class="logo-icon">📋</span>
+      <span>EASYATTEND</span>
+    </div>
+    <nav class="nav-menu">
+      <button class="nav-item active" data-view="dashboard"><iconify-icon icon="ph:circles-four-fill" style="font-size:1.2rem;"></iconify-icon> Dashboard</button>
+      <button class="nav-item" data-view="register"><iconify-icon icon="ph:user-plus" style="font-size:1.2rem;"></iconify-icon> Register</button>
+      <button class="nav-item" data-view="attendance"><iconify-icon icon="ph:calendar-check" style="font-size:1.2rem;"></iconify-icon> Attendance</button>
+      <button class="nav-item" data-view="analytics"><iconify-icon icon="ph:chart-bar" style="font-size:1.2rem;"></iconify-icon> Analytics</button>
+      <button class="nav-item" data-view="people"><iconify-icon icon="ph:users-three" style="font-size:1.2rem;"></iconify-icon> People</button>
+    </nav>
+    <div class="bottom-side">
+      <div class="theme-toggle" id="themeToggle">
+        <span>🌙 Dark Mode</span>
+        <iconify-icon icon="ph:moon-stars"></iconify-icon>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Dashboard -->
+  <main class="main-panel" id="mainContent">
+    <!-- dynamic content injected via JS -->
+  </main>
+</div>
+
+<script>
+  (function() {
+    // ---------- EASYATTEND STATE ----------
+    const state = {
+      darkMode: false,
+      currentView: 'dashboard',
+      people: [
+        { id: 'EMP001', fullName: 'Mutesi Keza', nationalId: '1199780012345678', phone: '0788123456', gender: 'Female', province: 'Kigali', district: 'Gasabo', sector: 'Remera', cell: 'Kimironko', village: 'Agatare', photo: '' },
+        { id: 'EMP002', fullName: 'Hakizimana Eric', nationalId: '1199880023456789', phone: '0722987654', gender: 'Male', province: 'South', district: 'Huye', sector: 'Ngoma', cell: 'Rango', village: 'Cyiri', photo: '' }
+      ],
+      attendanceRecords: [
+        { personId: 'EMP001', date: '2026-06-02', checkIn: '08:05', checkOut: '17:10', status: 'present' },
+        { personId: 'EMP002', date: '2026-06-02', checkIn: '09:15', checkOut: '16:45', status: 'late' }
+      ],
+      nextId: 3
+    };
+
+    // Helper to generate unique ID
+    function generateEmpId() {
+      return 'EMP' + String(state.nextId).padStart(3,'0');
+    }
+
+    // Current date mock
+    const todayStr = '2026-06-02';
+
+    // ---------- RENDER ENGINE ----------
+    const mainContent = document.getElementById('mainContent');
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+
+    function applyTheme() {
+      if (state.darkMode) {
+        body.classList.add('dark');
+        themeToggle.innerHTML = `<span>☀️ Light Mode</span><iconify-icon icon="ph:sun"></iconify-icon>`;
+      } else {
+        body.classList.remove('dark');
+        themeToggle.innerHTML = `<span>🌙 Dark Mode</span><iconify-icon icon="ph:moon-stars"></iconify-icon>`;
+      }
+    }
+
+    themeToggle.addEventListener('click', () => {
+      state.darkMode = !state.darkMode;
+      applyTheme();
+      renderView(state.currentView);
+    });
+
+    // Navigation
+    document.querySelectorAll('.nav-item').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        const view = this.dataset.view;
+        state.currentView = view;
+        renderView(view);
+      });
+    });
+
+    // ---- VIEW RENDERERS ----
+    function renderView(view) {
+      switch(view) {
+        case 'dashboard': renderDashboard(); break;
+        case 'register': renderRegister(); break;
+        case 'attendance': renderAttendance(); break;
+        case 'analytics': renderAnalytics(); break;
+        case 'people': renderPeople(); break;
+        default: renderDashboard();
+      }
+    }
+
+    // DASHBOARD
+    function renderDashboard() {
+      const totalPeople = state.people.length;
+      const todayAtt = state.attendanceRecords.filter(r => r.date === todayStr);
+      const presentToday = todayAtt.filter(r => r.status === 'present' || r.status === 'late').length;
+      const absentToday = totalPeople - presentToday;
+      const rate = totalPeople ? Math.round((presentToday/totalPeople)*100) : 0;
+
+      const html = `
+        <div class="top-bar">
+          <div class="search-box">
+            <iconify-icon icon="ph:magnifying-glass" style="color:#94a3b8;"></iconify-icon>
+            <input placeholder="Search by name, ID, phone...">
+          </div>
+          <div class="profile-badge">
+            <iconify-icon icon="ph:user-circle" style="font-size:2rem; color:#2563eb;"></iconify-icon>
+            <div><strong>Admin</strong><br><small>Super Admin</small></div>
+          </div>
+        </div>
+        <h2 style="font-weight:600; margin-bottom:1rem;">Dashboard Overview</h2>
+        <div class="stats-grid">
+          <div class="stat-card"><small>Total Registered</small><h2>${totalPeople}</h2><iconify-icon icon="ph:users" style="font-size:2rem;opacity:0.6;"></iconify-icon></div>
+          <div class="stat-card"><small>Present Today</small><h2>${presentToday}</h2><span style="color:#10b981;">👥</span></div>
+          <div class="stat-card"><small>Absent Today</small><h2>${absentToday}</h2><span style="color:#ef4444;">⚠️</span></div>
+          <div class="stat-card"><small>Attendance Rate</small><h2>${rate}%</h2><span class="ai-badge">AI</span></div>
+        </div>
+        <div class="dashboard-grid">
+          <div class="card">
+            <h3>📊 Attendance Trends</h3>
+            <div style="height:150px; display:flex; align-items:center; justify-content:center; background:#f1f5f9; border-radius:20px; margin-top:1rem;">📈 Chart: weekly trend (simulated)</div>
+          </div>
+          <div class="card">
+            <h3>📍 Regional Breakdown</h3>
+            <div style="display:flex; gap:1rem; margin-top:1rem;">
+              <span>Kigali: 65%</span><span>South: 20%</span><span>West: 15%</span>
+            </div>
+            <div style="height:100px; background:#e2e8f0; border-radius:16px; margin-top:0.5rem;"></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>⏱️ Recent Attendance</h3>
+          <table class="attendance-table">
+            <tr><th>Name</th><th>Date</th><th>Check-in</th><th>Status</th></tr>
+            ${state.attendanceRecords.slice(-3).map(r => {
+              const person = state.people.find(p => p.id === r.personId);
+              return `<tr><td>${person?.fullName || 'Unknown'}</td><td>${r.date}</td><td>${r.checkIn}</td><td>${r.status}</td></tr>`;
+            }).join('')}
+          </table>
+        </div>
+      `;
+      mainContent.innerHTML = html;
+    }
+
+    // REGISTER VIEW
+    function renderRegister() {
+      const html = `
+        <div class="top-bar"><h2>Register New Person</h2></div>
+        <div class="card" style="max-width:700px;">
+          <form id="registerForm" style="display:grid; gap:1rem;">
+            <input class="field" placeholder="Full Name *" required id="fullName">
+            <input class="field" placeholder="National ID *" required id="nationalId">
+            <input class="field" placeholder="Phone Number *" required id="phone">
+            <input class="field" placeholder="Email (optional)" id="email">
+            <select class="field" id="gender"><option>Female</option><option>Male</option></select>
+            <input class="field" type="date" id="dob">
+            <input class="field" placeholder="Province" id="province" value="Kigali">
+            <input class="field" placeholder="District" id="district">
+            <input class="field" placeholder="Sector" id="sector">
+            <button type="submit" class="btn">Register Person</button>
+          </form>
+        </div>
+        <style>.field { padding:0.8rem; border-radius:20px; border:1px solid #e2e8f0; background:rgba(255,255,255,0.7); font-family:Poppins; } body.dark .field { background:rgba(30,41,59,0.7); border-color:#334155; color:white; }</style>
+      `;
+      mainContent.innerHTML = html;
+      document.getElementById('registerForm').addEventListener('submit', function(e){
+        e.preventDefault();
+        const newPerson = {
+          id: generateEmpId(),
+          fullName: document.getElementById('fullName').value,
+          nationalId: document.getElementById('nationalId').value,
+          phone: document.getElementById('phone').value,
+          gender: document.getElementById('gender').value,
+          province: document.getElementById('province').value,
+          district: document.getElementById('district').value,
+          sector: document.getElementById('sector').value,
+        };
+        state.people.push(newPerson);
+        state.nextId++;
+        alert('Person registered! ID: ' + newPerson.id);
+        renderView('register');
+      });
+    }
+
+    // ATTENDANCE VIEW
+    function renderAttendance() {
+      const peopleOptions = state.people.map(p => `<option value="${p.id}">${p.fullName} (${p.id})</option>`).join('');
+      const html = `
+        <div class="top-bar"><h2>Mark Attendance</h2></div>
+        <div class="card">
+          <select id="personSelect" style="padding:0.8rem; border-radius:20px; width:100%; margin-bottom:1rem;">${peopleOptions}</select>
+          <button id="checkInBtn" class="btn">Check-in Now</button>
+          <button id="checkOutBtn" class="btn btn-outline" style="margin-left:1rem;">Check-out</button>
+        </div>
+        <div class="card" style="margin-top:1.5rem;">
+          <h3>Today's Records</h3>
+          <div id="todayList"></div>
+        </div>
+      `;
+      mainContent.innerHTML = html;
+      function refreshToday() {
+        const todayRecs = state.attendanceRecords.filter(r => r.date === todayStr);
+        const list = document.getElementById('todayList');
+        if(list) list.innerHTML = todayRecs.map(r => {
+          const p = state.people.find(x=>x.id===r.personId);
+          return `<div>${p?.fullName} - in:${r.checkIn} out:${r.checkOut || '--'} (${r.status})</div>`;
+        }).join('');
+      }
+      refreshToday();
+      document.getElementById('checkInBtn').addEventListener('click', ()=>{
+        const pid = document.getElementById('personSelect').value;
+        if(state.attendanceRecords.some(r=>r.personId===pid && r.date===todayStr)) { alert('Already checked in today'); return; }
+        state.attendanceRecords.push({personId: pid, date: todayStr, checkIn: new Date().toLocaleTimeString('en-US',{hour12:false, hour:'2-digit',minute:'2-digit'}), checkOut: null, status: 'present'});
+        refreshToday();
+      });
+    }
+
+    function renderAnalytics() {
+      mainContent.innerHTML = `<div class="card"><h2>📊 AI Analytics</h2><p>Attendance predictions, reliability scores, and heatmaps. (AI engine integrated)</p><div style="height:180px; background:#eef2ff; border-radius:24px;"></div></div>`;
+    }
+
+    function renderPeople() {
+      const html = `
+        <div class="top-bar"><h2>People Directory</h2></div>
+        <div class="card">${state.people.map(p => `<div style="display:flex; justify-content:space-between; padding:0.6rem 0;"> <span><strong>${p.fullName}</strong> - ${p.id}</span> <span>${p.phone}</span></div>`).join('')}</div>
+      `;
+      mainContent.innerHTML = html;
+    }
+
+    // Initial render
+    applyTheme();
+    renderView('dashboard');
+  })();
+</script>
+</body>
+</html>
